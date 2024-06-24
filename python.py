@@ -1,33 +1,46 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# PYTHON CHEATSHEET
 
-import logging
-import sys
-#import yaml
+''' PYTHON CHEATSHEET '''
+
+import argparse
 import json
-import urllib2
-from math import pi
+import logging
+import os
 import re
+import sys
+from urllib.parse import urlparse
+from math import pi
+
+# Third party imports
+import requests
+from requests.auth import HTTPBasicAuth
+
+VERSION = '1.0'
 
 class MyClass():
-    def __init__(self):
-        pass
-    def someFunc(self, argument):
-        """ THis is a docstring
-        """
-        self.oneInstanceVar = 'foo'
-        self.someFunc() # Call another instance function
+    # pylint: disable=missing-docstring, missing-function-docstring
+    # pylint: disable=pointless-statement, unused-variable
+    # pylint: disable=pointless-string-statement
+    def __init__(self, log=logging.getLogger(__name__) ):
+        self.log = log
+        self.log.info('MyClass instance created')
+        self.one_instance_var = 'foo'
 
-    def stringOps(self):
+    def some_func(self, an_argument='foo'):
+        """ This is a docstring
+        """
+        self.some_func() # Call another instance function
+        self.one_instance_var = an_argument
+
+    def string_ops(self):
         my_string = 'hello there'
         my_string[4] # SHows the 4th char
         string_list = my_string.split(' ')
         joined_string = ' '.join(string_list)
-        print("foo %s bar: %s" % string_list[0], string_list[1])
-        # Alternate interpolation syntax
-        print("foo {} bar {}".format(string_list[0], string_list[1]))
-    def dsOps(self):
+        print(f"foo {string_list[0]} bar: {string_list[1]}")
+
+    def ds_ops(self):
         """ Working with lists and dicts """
         mylist = ['spam', 'eggs', 100, 200] # Creates a list
         idx = 1
@@ -46,10 +59,11 @@ class MyClass():
         """ Dicts / Dictionary operations """
         tel = {'aj': 1234, 'jk': 5678}
         dict([('foo', 1234),('bar', 5678)])
-        tel.has_key('aj')
+        'aj' in tel
         tel.keys()
         tel.items()
-    def conditionalsAndLoops(self):
+
+    def conditionals_and_loops(self):
         """ Some conditionals examples, and some loops
             uses 'if', 'elif', 'else'.
             'break' breaks out of loops, 'continue' short-circuts
@@ -64,65 +78,85 @@ class MyClass():
         for idx,value in enumerate(my_list):
             print(idx,value)
 
-    def fileIO(self):
+    def file_io(self):
         """ Reading and writig to files """
         x = int(input("Please enter an integer:"))
         [ sys.argv[0], sys.argv[1]] # ['prodname', 'first-arg']
-        # see better arg parsing
-        # non-enclosure
-        fh = open('foo','w')
-        fh.write('hi there')
-        fh.close()
-        # closure method
-        with open('foo','r') as fh:
+        with open('foo','w', encoding='utf-8') as fh:
+            fh.write('hi there')
+            fh.close()
+        with open('foo','r', encoding='utf-8') as fh:
             num_bytes=10
             fh.read(num_bytes)
             fh.readline() # A line string
             fh.readline() # a list of strings
+        # Other valid open modes: 'r+', 'w+', 'a', 'a+'
 
-    def usingYamlAndJson(self):
+    def using_yaml_and_json(self):
         """ Conventions.. safe_load, load, dump operates on
             file handles.. loads/dumps operates with strings
         """
-        with open('some_datafile','rw') as fh:
+        with open('some_datafile','r+', encoding='utf-8') as fh:
             #myData = yaml.safe_load(fh)
             #yaml.dump(myData,fh)
             fh.reset()
-            myData = json.load(fh)
-            json.dump(myData,fh)
+            my_data = json.load(fh)
+            json.dump(my_data,fh)
 
-        response = urllib2.open("http://www.google.com/")
-        html = response.read()
 
-    def lambdas(self):
-        def make_incrementer(n):
-            return lambda x: x+n
-        f = make_incrementer(42)
-        f(0); f(1) # $2, then 43
+    def http_requests(self):
+        # how to parse a url, make a http / rest request with json headers
+        # etc
+        query = {'lat':'45', 'lon':'180'}
+        response = requests.get('http://foo.ai/bar', params=query, timeout=5)
+        my_dict = response.json()
+        response = requests.post('https://foo.ai/bar', data = {'key':'value'},
+                                 timeout=5)
+
+        # Authentication examples...
+        session = requests.Session()
+        session.headers.update({'Authorization': 'Bearer {access_token}'})
+        session.get('https://api.github.com/user',
+            auth=HTTPBasicAuth('username', 'password'), timeout=5
+        )
+
+        # URL Parsing
+        o = urlparse("http://docs.python.org:80/3/library/urllib.parse.html?"
+             "highlight=params#url-parsing")
+        o._replace(fragment="").geturl()
 
     def comprehensions(self):
         """ Using Comprehensions """
         squares = [x**2 for x in range(10)]
-        [x for x in squares if x >= 0]
-        [str(round(pi, i)) for i in range(1, 6)]
-        {x: x**2 for x in (2,4,6)} # Dict creation via comp.
+        z = [x for x in squares if x >= 0]
+        z = [str(round(pi, i)) for i in range(1, 6)]
+        z = {x: x**2 for x in (2,4,6)} # Dict creation via comp.
 
-    def someOtherOps(self):
+    def some_other_ops(self):
         os.path.isfile('some_file')
         os.path.exists('some_file')
         os.makedirs('new_dir')
         re.search(r'^First','First Line OPf FIle') # returns match obj
 
         try:
-            raise Exception('oops!')
-        except Exception as e:
-            print("Something happened {}".format(e))
+            raise ValueError('oops!') # subclass of Exception
+        except ValueError as e:
+            print(f"Something happened {e}")
         finally:
             'this_always_happens'
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="My App", epilog='V'+VERSION)
+    parser.add_argument('--debug', action='store_true', default=False,
+                        help='Enable debug logging')
+    args = parser.parse_args()
+
+    logger = logging.getLogger(__name__)
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+
     print('This script is being run directly')
-    myInstance = MyClass()
-    myInstance.lambdas()
+    myInstance = MyClass(log=logger)
+    myInstance.string_ops()
     dir(myInstance)
