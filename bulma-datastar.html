@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BULMA + DATASTAR CHEATSHEET</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+</head>
+<body>
+
+<!-- Bulma: is-primary|link|info|success|warning|danger. Sizes: is-small|medium|large -->
+<button class="button">Button</button>
+<button class="button is-primary">Primary</button>
+<button class="button is-danger is-outlined is-large">Danger</button>
+
+<div class="box">
+  <p class="title is-4">Box Title</p>
+  <p class="subtitle is-6">A simple container</p>
+</div>
+
+<div class="notification is-info">Info</div>
+<div class="message is-warning">
+  <div class="message-header">Warning</div>
+  <div class="message-body">Message body</div>
+</div>
+
+<progress class="progress is-primary" value="60" max="100"></progress>
+<span class="tag is-success">Tag</span>
+
+<!-- Layout: container, section, columns -->
+<div class="container">
+  <section class="section">
+    <h1 class="title">Section</h1>
+    <h2 class="subtitle">Subtitle</h2>
+  </section>
+</div>
+
+<div class="columns">
+  <div class="column is-half">Half</div>
+  <div class="column is-one-third">Third</div>
+  <div class="column">Auto</div>
+</div>
+
+<!-- Navbar: navbar-brand, navbar-burger, navbar-menu -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#">Brand</a>
+    <a role="button" class="navbar-burger" aria-label="menu" data-target="navMenu">
+      <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      <span aria-hidden="true"></span><span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div id="navMenu" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item">Home</a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">More</a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item">Item</a>
+          <a class="navbar-item">Other</a>
+        </div>
+      </div>
+    </div>
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button is-primary">Sign up</a>
+          <a class="button is-light">Log in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Forms: field, label, control, input -->
+<div class="field">
+  <label class="label">Label</label>
+  <div class="control">
+    <input class="input" placeholder="Text input">
+  </div>
+  <p class="help">Help text</p>
+</div>
+
+<div class="field has-addons">
+  <div class="control"><input class="input" placeholder="Find"></div>
+  <div class="control"><a class="button is-info">Search</a></div>
+</div>
+
+<!-- Card -->
+<div class="card">
+  <div class="card-content">
+    <div class="media">
+      <div class="media-left"><figure class="image is-48x48"><img src="https://via.placeholder.com/96" alt=""></figure></div>
+      <div class="media-content">
+        <p class="title is-4">Card Title</p>
+        <p class="subtitle is-6">@subtitle</p>
+      </div>
+    </div>
+    <div class="content">Card content.</div>
+  </div>
+  <footer class="card-footer">
+    <a href="#" class="card-footer-item">Save</a>
+    <a href="#" class="card-footer-item">Edit</a>
+  </footer>
+</div>
+
+<!-- Datastar: data-signals, data-bind, data-text, data-show, data-on -->
+<!-- $signals. @get/@post actions. Semicolon for multi-stmt -->
+<div data-signals:count="0">
+  <span data-text="$count"></span>
+  <button class="button" data-on:click="$count = $count + 1">Increment</button>
+</div>
+
+<div data-signals:message="''">
+  <input class="input" data-bind:message placeholder="Type something">
+  <p data-text="$message"></p>
+</div>
+
+<div data-signals:visible="true">
+  <button class="button" data-on:click="$visible = !$visible">Toggle</button>
+  <div data-show="$visible">Now you see me</div>
+</div>
+
+<button class="button" data-on:click="@get('/api/data')">Fetch</button>
+<button class="button" data-on:click="$ready && @post('/launch')">Launch</button>
+
+<button data-class:is-success="$count > 5">Conditional class</button>
+
+<!-- data-computed, ternary -->
+<div data-signals:name="''" data-computed:greeting="$name ? 'Hello, ' + $name : 'Who are you?'">
+  <input class="input" data-bind:name placeholder="Your name">
+  <p data-text="$greeting"></p>
+</div>
+
+<div data-signals:count="0"><span data-text="$count >= 10 ? 'High' : 'Low'"></span></div>
+
+<!-- Combined -->
+<div class="box" data-signals:expanded="false">
+  <input class="input" data-bind:search placeholder="Search...">
+  <button class="button is-info" data-on:click="$expanded = !$expanded">Toggle</button>
+  <div data-show="$expanded">
+    <div class="notification" data-text="'Results: ' + $search"></div>
+  </div>
+</div>
+
+</body>
+</html>
