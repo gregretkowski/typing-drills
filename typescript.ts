@@ -9,7 +9,7 @@ import * as readline from 'readline';
 
 const VERSION = '1.0';
 
-// ── Types & Interfaces ────────────────────────────────────────────────────────
+// Types & Interfaces
 
 type StringOrNumber = string | number;         // Union type
 type Nullable<T>   = T | null;                 // Generic type alias
@@ -29,13 +29,13 @@ interface Dog extends Animal {                 // Interface extension
 // Enum
 enum Direction { Up = 'UP', Down = 'DOWN', Left = 'LEFT', Right = 'RIGHT' }
 
-// ── Generic Functions ─────────────────────────────────────────────────────────
+// Generic Functions
 
 function identity<T>(arg: T): T { return arg; }
 function first<T>(arr: T[]): T | undefined { return arr[0]; }
 function merge<A, B>(a: A, b: B): A & B { return { ...a, ...b } as A & B; }
 
-// ── Utility Types ─────────────────────────────────────────────────────────────
+// Utility Types
 
 type PartialDog  = Partial<Dog>;               // All props optional
 type ReadonlyDog = Readonly<Dog>;              // All props readonly
@@ -43,7 +43,7 @@ type DogPreview  = Pick<Dog, 'name' | 'breed'>; // Subset of props
 type NoDogId     = Omit<Dog, 'id'>;            // Exclude specific props
 type RecordMap   = Record<string, number>;     // Key-value map type
 
-// ── Class ─────────────────────────────────────────────────────────────────────
+// Class
 
 class MyClass {
   private   secret: string  = 'hidden';
@@ -249,7 +249,7 @@ line two`;
   }
 }
 
-// ── Decorators (experimental) ─────────────────────────────────────────────────
+// Decorators (experimental)
 
 function log(target: unknown, key: string, desc: PropertyDescriptor) {
   const orig = desc.value;
@@ -259,12 +259,12 @@ function log(target: unknown, key: string, desc: PropertyDescriptor) {
   };
 }
 
-// ── Module pattern (barrel export example) ───────────────────────────────────
+// Module pattern (barrel export example)
 
 export { MyClass, Direction, VERSION };
 export type { Animal, Dog, StringOrNumber, Nullable };
 
-// ── Entry point ───────────────────────────────────────────────────────────────
+// Entry point
 
 const instance = MyClass.create('drill');
 instance.stringOps();
